@@ -13,9 +13,8 @@ license: MIT
 compatibility: Requires gh (GitHub CLI >= 2.40) and git (>= 2.30). Run gh auth login before first use.
 metadata:
   author: wd041216-bit
-  version: "3.0.0"
+  version: "4.0.0"
   homepage: https://github.com/wd041216-bit/openclaw-github-repo-commander
-allowed-tools: Bash(gh:*) Bash(git:*)
 ---
 
 # GitHub Repo Commander

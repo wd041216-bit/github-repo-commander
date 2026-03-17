@@ -60,7 +60,8 @@ A written summary of: request type, target repo, success criteria, and constrain
 
 ```bash
 # Clone with token (if needed)
-git clone https://<TOKEN>@github.com/<owner>/<repo>.git
+export GH_TOKEN=<your-pat>  # recommended: use env var, never embed in URL
+gh repo clone <owner>/<repo>    # or: git clone https://github.com/<owner>/<repo>.git
 cd <repo>
 
 # Configure git identity

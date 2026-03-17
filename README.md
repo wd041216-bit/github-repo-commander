@@ -18,11 +18,9 @@ The skill is designed to prevent the most common failure modes in automated repo
 
 ## Installation
 
-**Via ClawHub (recommended):**
+**Via Manus Skills (recommended):**
 
-```bash
-clawdbot skill install wd041216-bit/openclaw-github-repo-commander
-```
+Attach the `SKILL.md` file to your Manus agent, or clone the full repository for access to all scripts and references.
 
 **Manual installation:**
 

@@ -1,0 +1,78 @@
+name: Validate Skill
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check SKILL.md exists and has frontmatter
+        run: |
+          if [ ! -f SKILL.md ]; then
+            echo "ERROR: SKILL.md is missing"
+            exit 1
+          fi
+          if ! head -1 SKILL.md | grep -q "^---"; then
+            echo "ERROR: SKILL.md missing YAML frontmatter"
+            exit 1
+          fi
+          if ! grep -q "^name:" SKILL.md; then
+            echo "ERROR: SKILL.md missing 'name' field"
+            exit 1
+          fi
+          if ! grep -q "^description:" SKILL.md; then
+            echo "ERROR: SKILL.md missing 'description' field"
+            exit 1
+          fi
+          echo "SKILL.md frontmatter: OK"
+
+      - name: Check SKILL.md line count
+        run: |
+          LINES=$(wc -l < SKILL.md)
+          if [ "$LINES" -gt 500 ]; then
+            echo "WARNING: SKILL.md has $LINES lines (recommended max: 500)"
+          else
+            echo "SKILL.md line count: $LINES (OK)"
+          fi
+
+      - name: Validate shell scripts syntax
+        run: |
+          for script in scripts/*.sh; do
+            if [ -f "$script" ]; then
+              bash -n "$script" && echo "Syntax OK: $script" || exit 1
+            fi
+          done
+
+      - name: Check scripts are executable
+        run: |
+          for script in scripts/*.sh; do
+            if [ -f "$script" ] && [ ! -x "$script" ]; then
+              echo "ERROR: $script is not executable"
+              exit 1
+            fi
+          done
+          echo "Script permissions: OK"
+
+      - name: Scan for hardcoded secrets
+        run: |
+          HITS=$(grep -rn \
+            --include="*.py" --include="*.js" --include="*.ts" \
+            --include="*.yaml" --include="*.yml" --include="*.json" \
+            --exclude-dir=.git \
+            -E 'APP_SECRET|APP_ID|api_key=|apikey=|password=|secret_key|private_key|ghp_[a-zA-Z0-9]+' \
+            . 2>/dev/null | grep -v 'example\|placeholder\|YOUR_\|<.*>' || true)
+          if [ -n "$HITS" ]; then
+            echo "ERROR: Potential hardcoded secrets found:"
+            echo "$HITS"
+            exit 1
+          fi
+          echo "Secret scan: OK"
+
+      - name: Run repo-audit.sh
+        run: bash scripts/repo-audit.sh .

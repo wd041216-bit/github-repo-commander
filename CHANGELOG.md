@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-03-18
+
+### Fixed
+- **Version inconsistency**: Synchronized `SKILL.md` `metadata.version` and `_meta.json` version (both now `4.0.0`)
+- **Non-standard `allowed-tools` field**: Removed from SKILL.md frontmatter (not part of official Manus spec)
+- **Token-in-URL anti-pattern**: `references/workflow.md` now recommends `GH_TOKEN` env var instead of embedding token in clone URL
+- **Fictitious `clawdbot` install command**: README now shows correct Manus-based installation instructions
+
+### Added
+- `.github/workflows/validate.yml`: GitHub Actions CI — validates SKILL.md frontmatter, script syntax, line count, and runs `repo-audit.sh` on every push/PR
+- `.github/ISSUE_TEMPLATE/bug_report.md`: Structured bug report template
+- `.github/ISSUE_TEMPLATE/feature_request.md`: Structured feature request template
+- `.github/pull_request_template.md`: PR checklist template
+- `CONTRIBUTING.md`: Contribution guide with commit conventions and quality standards
+
+### Changed
+- `_meta.json` tags expanded: added `audit`, `cleanup`, `optimization` for better discoverability
+
 ## [3.0.0] — 2026-03-18
 
 ### Added

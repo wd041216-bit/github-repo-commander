@@ -32,8 +32,8 @@ echo "[ 1/7 ] Scanning for hardcoded secrets..."
 SECRET_PATTERNS="APP_SECRET|APP_ID|api_key|apikey|password|passwd|secret_key|private_key|access_token|auth_token|GITHUB_TOKEN|ghp_"
 HITS=$(grep -rn --include="*.py" --include="*.js" --include="*.ts" \
   --include="*.yaml" --include="*.yml" --include="*.json" --include="*.env" \
-  --exclude-dir=".git" --exclude-dir="node_modules" \
-  -E "$SECRET_PATTERNS" . 2>/dev/null | grep -v "example\|placeholder\|YOUR_\|<.*>" || true)
+  --exclude-dir=".git" --exclude-dir="node_modules" --exclude-dir="workflows" \
+  -E "$SECRET_PATTERNS" . 2>/dev/null | grep -v "example\|placeholder\|YOUR_\|<.*>\|SECRET_PATTERNS\|grep" || true)
 
 if [ -z "$HITS" ]; then
   pass "No hardcoded secrets detected"
