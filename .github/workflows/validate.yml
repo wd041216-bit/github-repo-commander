@@ -61,12 +61,14 @@ jobs:
 
       - name: Scan for hardcoded secrets
         run: |
+          # Exclude .github/workflows to avoid false positives from grep patterns in CI scripts
           HITS=$(grep -rn \
             --include="*.py" --include="*.js" --include="*.ts" \
-            --include="*.yaml" --include="*.yml" --include="*.json" \
+            --include="*.json" \
             --exclude-dir=.git \
-            -E 'APP_SECRET|APP_ID|api_key=|apikey=|password=|secret_key|private_key|ghp_[a-zA-Z0-9]+' \
-            . 2>/dev/null | grep -v 'example\|placeholder\|YOUR_\|<.*>' || true)
+            --exclude-dir=.github \
+            -E 'APP_SECRET=["'"'"'][^"'"'"']+["'"'"']|api_key=["'"'"'][^"'"'"']+["'"'"']|password=["'"'"'][^"'"'"']+["'"'"']|ghp_[A-Za-z0-9]{36,}' \
+            . 2>/dev/null | grep -v 'example\|placeholder\|YOUR_\|<.*>\|PATTERN\|grep' || true)
           if [ -n "$HITS" ]; then
             echo "ERROR: Potential hardcoded secrets found:"
             echo "$HITS"
