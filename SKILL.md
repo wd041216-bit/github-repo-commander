@@ -13,7 +13,7 @@ license: MIT
 compatibility: Requires gh (GitHub CLI >= 2.40) and git (>= 2.30). Run gh auth login before first use.
 metadata:
   author: wd041216-bit
-  version: "4.0.0"
+  version: "4.1.0"
   homepage: https://github.com/wd041216-bit/openclaw-github-repo-commander
 ---
 
@@ -109,6 +109,33 @@ Before committing any structural change, verify all of the following:
 - [ ] All referenced files and links actually exist
 - [ ] Scripts are executable and have no hardcoded business-specific values
 - [ ] No large binary files committed accidentally
+
+## Notebook Invariant Checker (for LLM Cookbook PRs)
+
+When submitting Jupyter notebooks to LLM cookbook repositories (OpenAI, Gemini, Claude, Mistral, LLaMA, Qwen, etc.), use the invariant checker to prevent regressions across review rounds:
+
+```bash
+# Check a single notebook
+python3 scripts/notebook-invariant-checker.py --notebook path/to/notebook.ipynb
+
+# Check multiple notebooks at once
+python3 scripts/notebook-invariant-checker.py \
+    --notebook examples/openai_notebook.ipynb \
+    --notebook examples/gemini_notebook.ipynb
+
+# Auto-discover all notebooks in a directory
+python3 scripts/notebook-invariant-checker.py --dir examples/
+```
+
+The checker enforces three layers of invariants:
+
+| Layer | Scope | Count | Examples |
+|-------|-------|-------|----------|
+| Universal | All LLM cookbook notebooks | 7 | No `while True`, no deprecated imports, second-person voice |
+| OpenAI-specific | OpenAI cookbook notebooks | 13 | Lazy client init, `RUN_EXAMPLES` guard, no signature conflicts |
+| Gemini-specific | Gemini cookbook notebooks | 12 | License cell, `cellView=form`, Google-style docstrings |
+
+> **Rule:** Run the checker BEFORE and AFTER every fix. If any invariant fails, do NOT commit. Exit code `0` = safe to commit; `1` = fix required.
 
 ## Competitor Analysis Guide (Stage 4)
 
