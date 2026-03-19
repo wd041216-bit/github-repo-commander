@@ -182,6 +182,81 @@ Answer each before proceeding to Stage 4:
 5. Are there empty directories? → If yes, remove or populate them.
 6. Are all scripts executable and generic? → If no, fix them.
 
+## Stage 3.5: Privacy Information Cleanup
+
+**Goal:** Detect and remove all privacy-sensitive information before committing.
+
+**CRITICAL:** This stage was added after a real-world incident where GitHub tokens were accidentally committed. **Never skip this stage.**
+
+### Privacy Scan Command
+
+```bash
+# Run comprehensive privacy scan
+./scripts/privacy-check.sh
+
+# Or run enhanced repo-audit with privacy checks
+./scripts/repo-audit.sh --privacy
+```
+
+### What This Stage Detects
+
+| Pattern Type | Examples | Risk Level |
+|-------------|----------|------------|
+| GitHub Tokens | `ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_` | 🔴 Critical |
+| API Keys | `sk-`, `api_key`, `apikey`, `api-key` | 🔴 Critical |
+| OAuth Tokens | `oauth`, `bearer`, `access_token` | 🔴 Critical |
+| Private Keys | `-----BEGIN.*PRIVATE KEY-----` | 🔴 Critical |
+| Passwords | `password`, `passwd`, `pwd` | 🔴 Critical |
+| Secrets | `APP_SECRET`, `SECRET_KEY`, `secret` | 🔴 Critical |
+| Database URLs | `mongodb://`, `postgres://`, `mysql://` | 🟡 High |
+| Email Addresses | Personal emails in comments | 🟡 Medium |
+| IP Addresses | `192.168.x.x`, `10.x.x.x` | 🟡 Medium |
+| Phone Numbers | `+1-xxx-xxx-xxxx` patterns | 🟡 Medium |
+| Credit Cards | `4xxx-xxxx-xxxx-xxxx` patterns | 🔴 Critical |
+
+### Privacy Cleanup Workflow
+
+1. **Scan for Secrets** — Use `./scripts/privacy-check.sh` to detect all sensitive patterns
+2. **Replace with Placeholders** — Use `YOUR_SECRET_HERE` or `<REDACTED>` as placeholders
+3. **Verify Git History** — Check if secrets were ever committed: `git log --all --full-history -- "**/*.env"`
+4. **Rotate Credentials** — If any secret was ever committed, **rotate it immediately**
+5. **Update .gitignore** — Add patterns: `*.env`, `.env.*`, `secrets.*`, `*_secret.*`
+6. **Re-scan** — Run `./scripts/privacy-check.sh` again to confirm all issues are resolved
+
+### Emergency Protocol for Leaked Secrets
+
+```bash
+# If a secret was committed to a public repo:
+# 1. ROTATE IMMEDIATELY — Generate a new token/key
+# 2. Update all services using the old token
+# 3. Remove from git history (if public):
+git filter-branch --force --index-filter \
+  'git rm --cached --ignore-unmatch path/to/secret-file' \
+  --prune-empty --tag-name-filter cat -- --all
+git push origin --force --all
+# 4. Contact GitHub support if needed
+```
+
+### Files to Always Check
+
+- `.env`, `.env.local`, `.env.production`
+- `config/*.yaml`, `config/*.json`
+- `*.config.js`, `settings.py`
+- Scripts containing `export`, `setenv`, `TOKEN=`
+- GitHub Actions workflows (`.github/workflows/*.yml`)
+- Documentation examples with real credentials
+
+### Reflection Questions for Stage 3.5
+
+Answer each before proceeding to Stage 4:
+
+1. Are there any GitHub tokens? → If yes, remove and rotate immediately.
+2. Are there any API keys or secrets? → If yes, replace with placeholders.
+3. Are there any database URLs with credentials? → If yes, use example URLs.
+4. Are there any personal email addresses? → If yes, verify they are not sensitive.
+5. Are there any IP addresses? → If yes, verify they are not internal.
+6. Are there any private keys? → If yes, remove immediately.
+
 ---
 
 ## Stage 4: Competitor Analysis

@@ -20,6 +20,18 @@ venv/
 *.secret
 *.key
 *.pem
+*_secret.*
+secrets.*
+credentials.*
+*.credentials
+config/secrets.*
+config/local.*
+
+# Privacy-sensitive patterns (v4.2.0)
+*_token.*
+*_api_key.*
+private.*
+*.private
 
 # Temporary and backup files
 *.tmp

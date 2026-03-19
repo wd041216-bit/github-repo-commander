@@ -13,7 +13,7 @@ license: MIT
 compatibility: Requires gh (GitHub CLI >= 2.40) and git (>= 2.30). Run gh auth login before first use.
 metadata:
   author: wd041216-bit
-  version: "4.1.0"
+  version: "4.2.0"
   homepage: https://github.com/wd041216-bit/openclaw-github-repo-commander
 ---
 
@@ -109,6 +109,68 @@ Before committing any structural change, verify all of the following:
 - [ ] All referenced files and links actually exist
 - [ ] Scripts are executable and have no hardcoded business-specific values
 - [ ] No large binary files committed accidentally
+
+## Privacy Information Cleanup (Stage 3.5)
+
+**Critical security stage added after real-world incident.** Run this after Stage 3 and before Stage 4 for all repos.
+
+### What This Stage Detects
+
+| Pattern Type | Examples | Risk Level |
+|-------------|----------|------------|
+| GitHub Tokens | `ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_` | 🔴 Critical |
+| API Keys | `sk-`, `api_key`, `apikey`, `api-key` | 🔴 Critical |
+| OAuth Tokens | `oauth`, `bearer`, `access_token` | 🔴 Critical |
+| Private Keys | `-----BEGIN.*PRIVATE KEY-----` | 🔴 Critical |
+| Passwords | `password`, `passwd`, `pwd` | 🔴 Critical |
+| Secrets | `APP_SECRET`, `SECRET_KEY`, `secret` | 🔴 Critical |
+| Database URLs | `mongodb://`, `postgres://`, `mysql://` | 🟡 High |
+| Email Addresses | Personal emails in comments | 🟡 Medium |
+| IP Addresses | `192.168.x.x`, `10.x.x.x` | 🟡 Medium |
+| Phone Numbers | `+1-xxx-xxx-xxxx` patterns | 🟡 Medium |
+| Credit Cards | `4xxx-xxxx-xxxx-xxxx` patterns | 🔴 Critical |
+
+### Privacy Scan Command
+
+```bash
+# Run comprehensive privacy scan
+./scripts/privacy-check.sh
+
+# Or use the enhanced repo-audit.sh (includes privacy checks since v4.2.0)
+./scripts/repo-audit.sh --privacy
+```
+
+### Privacy Cleanup Workflow
+
+1. **Scan for Secrets** — Use `./scripts/privacy-check.sh` to detect all sensitive patterns
+2. **Replace with Placeholders** — Use `YOUR_SECRET_HERE` or `<REDACTED>` as placeholders
+3. **Verify Git History** — Check if secrets were ever committed: `git log --all --full-history -- "**/*.env"`
+4. **Rotate Credentials** — If any secret was ever committed, **rotate it immediately**
+5. **Update .gitignore** — Add patterns: `*.env`, `.env.*`, `secrets.*`, `*_secret.*`
+6. **Re-scan** — Run `./scripts/privacy-check.sh` again to confirm all issues are resolved
+
+### Emergency Protocol for Leaked Secrets
+
+```bash
+# If a secret was committed to a public repo:
+# 1. ROTATE IMMEDIATELY — Generate a new token/key
+# 2. Update all services using the old token
+# 3. Remove from git history (if public):
+git filter-branch --force --index-filter \
+  'git rm --cached --ignore-unmatch path/to/secret-file' \
+  --prune-empty --tag-name-filter cat -- --all
+git push origin --force --all
+# 4. Contact GitHub support if needed
+```
+
+### Files to Always Check
+
+- `.env`, `.env.local`, `.env.production`
+- `config/*.yaml`, `config/*.json`
+- `*.config.js`, `settings.py`
+- Scripts containing `export`, `setenv`, `TOKEN=`
+- GitHub Actions workflows (`.github/workflows/*.yml`)
+- Documentation examples with real credentials
 
 ## Notebook Invariant Checker (for LLM Cookbook PRs)
 

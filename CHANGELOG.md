@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.0] - 2026-03-19
+
+### Added
+- **Stage 3.5: Privacy Information Cleanup** — New critical stage for detecting and removing sensitive information
+- `scripts/privacy-check.sh` — Standalone privacy scan script with 10 comprehensive checks
+- **Enhanced `repo-audit.sh`** — Added `--privacy` flag for enhanced privacy scanning
+- Privacy detection patterns: GitHub tokens, API keys, passwords, secrets, database URLs, private keys, email addresses, IP addresses, OAuth tokens, credit cards
+- Emergency protocol for leaked secrets in `references/workflow.md`
+- Expanded `.gitignore` patterns for privacy-sensitive files
+
+### Changed
+- **SKILL.md** — Added comprehensive Stage 3.5 section with privacy cleanup workflow
+- **`repo-audit.sh`** — Enhanced secret pattern detection (now detects `ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_`, `sk-`, `sk_live_`)
+- **`references/workflow.md`** — Added detailed Stage 3.5 documentation with risk levels and reflection questions
+
+### Security
+- **CRITICAL FIX** — Prevents accidental commits of sensitive tokens and credentials
+- Added real-world incident documentation (GitHub token leak incident)
+
 ## [4.0.0] - 2026-03-18
 
 ### Fixed
