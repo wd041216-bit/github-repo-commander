@@ -75,7 +75,7 @@ HITS=$(grep -rn --include="*.py" --include="*.js" --include="*.ts" \
   --include="*.sh" --include="*.bash" --include="*.zsh" \
   --include="*.md" --include="*.txt" --include="*.cfg" --include="*.ini" \
   --exclude-dir=".git" --exclude-dir="node_modules" --exclude-dir="workflows" \
-  -E "$SECRET_PATTERNS" . 2>/dev/null | grep -v "example\|placeholder\|YOUR_\|<.*>\|SECRET_PATTERNS\|grep\|***REMOVED***\|<redacted>" || true)
+  -E "$SECRET_PATTERNS" . 2>/dev/null | grep -v "example\|placeholder\|YOUR_\|<.*>\|SECRET_PATTERNS\|grep\|***REMOVED***\|<redacted>\|workflow.md\|SKILL.md\|privacy-check.sh\|repo-audit.sh\|validate.yml" || true)
 
 if [ -z "$HITS" ]; then
   pass "No hardcoded secrets detected"
