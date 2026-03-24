@@ -1,161 +1,125 @@
-# openclaw-github-repo-commander
+# GitHub Repo Commander
 
-> An AI-powered GitHub repository management skill that applies the **7-Stage Super Workflow** to every task — deep audit, competitor benchmarking, and iterative optimization.
+Audit, polish, and package a repository before you open-source it, share it, or submit it to community directories.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-blue)](https://agentskills.io)
-[![Version](https://img.shields.io/badge/version-3.0.0-green)](CHANGELOG.md)
+For Chinese docs, see [README.zh-CN.md](./README.zh-CN.md).  
+For the skill definition, see [SKILL.md](./SKILL.md).
 
----
+`github-repo-commander` is a general-purpose repository stewardship skill. It combines public-facing README polish, privacy and metadata checks, and deeper GitHub workflow guidance so a repo becomes safer to publish and easier to recommend.
 
-## What It Does
+## Who it is for
 
-This skill transforms any AI agent into a senior open-source maintainer. When activated, it applies a structured 7-stage process to GitHub tasks: understanding the request, executing the operation, critically reflecting on the result, benchmarking against top competitors, synthesizing improvements, iterating, and validating the final output.
+- maintainers preparing a repo for public release
+- skill or tool authors improving README, metadata, and discoverability
+- people cleaning privacy leaks, weak packaging, and stale docs in one pass
+- community contributors preparing repos for awesome lists or curated directories
 
-The skill is designed to prevent the most common failure modes in automated repository management: hardcoded secrets, duplicate files, stale documentation, missing `.gitignore` rules, and shallow analysis that misses structural problems.
+## What it helps you do
 
----
+- catch privacy and open-source blockers before publishing
+- improve README first screen and project positioning
+- align metadata across `README`, `SKILL.md`, `skill.json`, and package manifests
+- strengthen trust signals such as changelogs, security policy, and contribution guidance
+- prepare a repo for community submission or directory review
 
 ## Installation
 
-**Via Manus Skills (recommended):**
-
-Attach the `SKILL.md` file to your Manus agent, or clone the full repository for access to all scripts and references.
-
-**Manual installation:**
+Clone the repo into your skills directory, or attach [SKILL.md](./SKILL.md) directly in ecosystems that support file-based skills.
 
 ```bash
 git clone https://github.com/wd041216-bit/openclaw-github-repo-commander.git \
-  ~/.claude/skills/openclaw-github-repo-commander
+  ~/.codex/skills/github-repo-commander
 ```
 
-**Prerequisites:** `gh` (GitHub CLI >= 2.40) and `git` (>= 2.30). Run `gh auth login` once before first use.
+Recommended prerequisites:
 
----
+- `gh`
+- `git`
+- Python 3 for the audit helper
 
-## Usage
-
-Simply mention a GitHub task in your conversation. The skill activates automatically for:
-
-| Trigger Phrase | What Happens |
-|----------------|--------------|
-| "Manage my GitHub repo" | Full 7-stage repo audit and optimization |
-| "Clean up this library" | Removes duplicates, fixes docs, adds .gitignore |
-| "Review this PR" | Security + quality PR review with competitor context |
-| "Create a new project" | Creates repo and benchmarks against top competitors |
-| "Use super workflow on my code" | Full 7-stage optimization cycle |
-| "Analyze competitor repos" | Structured competitor benchmarking report |
-| `/super-workflow <repo-url>` | Runs the complete workflow on any repository |
-
----
-
-## The 7-Stage Super Workflow
-
-The skill applies this process to every non-trivial task:
-
-**Stage 1 — Intake:** Parse the request type, inspect the target repository with `gh repo view`, and define explicit success criteria before touching any code.
-
-**Stage 2 — Execution:** Perform the primary GitHub operation (clone, edit files, create PR, etc.) using the appropriate `gh` and `git` commands.
-
-**Stage 3 — Reflection:** Run the automated audit script (`scripts/repo-audit.sh`) and manually verify: no hardcoded secrets, no duplicate directories, no empty stubs, comprehensive `.gitignore`, and accurate documentation.
-
-**Stage 4 — Competitor Analysis:** Search top-starred repositories in the same domain (`gh search repos <keyword> --sort stars`), inspect their structure, and identify gaps between the current state and industry best practices.
-
-**Stage 5 — Synthesis:** Combine Stage 3 and Stage 4 findings into a prioritized improvement plan (P0/P1/P2), presented to the user for confirmation before execution.
-
-**Stage 6 — Iteration:** Apply all approved improvements with descriptive conventional commits. For large changes (>10 files), show a `git diff --stat` and get explicit user confirmation.
-
-**Stage 7 — Validation:** Push changes, verify CI/CD status with `gh run list`, and deliver a summary report with the GitHub link, change table, and key insights.
-
----
-
-## Repository Structure
-
-```
-openclaw-github-repo-commander/
-├── SKILL.md                    # Skill metadata + concise instructions
-├── README.md                   # This file
-├── CHANGELOG.md                # Version history
-├── LICENSE                     # MIT License
-├── .gitignore                  # Standard exclusions
-├── references/
-│   ├── workflow.md             # 7-stage workflow detailed guide
-│   └── gh-commands.md          # Complete gh CLI command reference (50+)
-└── scripts/
-    ├── repo-audit.sh           # Automated Stage 3 audit (7 checks)
-    └── competitor-search.sh    # Stage 4 competitor search helper
-```
-
----
-
-## Automated Audit Script
-
-The `scripts/repo-audit.sh` script automates Stage 3 checks:
+## Quick example
 
 ```bash
-# Audit the current directory
-./scripts/repo-audit.sh
-
-# Audit a specific repository
-./scripts/repo-audit.sh /path/to/repo
+python3 ./scripts/repo_commander_audit.py /path/to/repo
 ```
 
-The script runs 7 checks: hardcoded secrets scan, `.gitignore` coverage, empty directory detection, large file detection, `node_modules` tracking, broken README links, and script executability. It exits with code 1 if any critical issues are found.
+Typical findings:
 
----
-
-## Real-World Example
-
-```
-User: "Audit and optimize wd041216-bit/openclaw-ultimate-suite"
-
-Stage 1: Clones repo, identifies 44 skills, notes 3.8MB node_modules committed
-Stage 2: Runs git log, scans for duplicates and secrets
-Stage 3: Finds APP_SECRET hardcoded in feishu scripts, 3 empty dirs, 2 duplicate skill dirs
-Stage 4: Searches "agent skills" on GitHub, finds anthropics/skills (95.8k stars)
-Stage 5: Plan: remove duplicates, fix secrets, add .gitignore, update README
-Stage 6: Executes cleanup with 3 commits; removes 62,072 lines of redundant content
-Stage 7: Pushes, shows diff stats, delivers GitHub link with full change summary
+```text
+HIGH   Potential github_token exposed in README.md
+HIGH   Local machine path found in docs/setup.md
+MEDIUM README.md is missing a clear public-facing first screen
+LOW    CHANGELOG.md is missing for a public package-style repo
+LOW    No SECURITY.md found for a repo that advertises security checks
 ```
 
----
+See [examples/audit-example.md](./examples/audit-example.md) for a fuller sample.
 
-## FAQ
+## Typical workflow
 
-**Q: The skill did not activate automatically. What should I do?**
+1. Audit the repo for privacy, packaging, and metadata gaps.
+2. Fix critical blockers first:
+   - tokens
+   - local paths
+   - personal data
+   - misleading public docs
+3. Improve the first screen:
+   - headline
+   - audience
+   - quick start
+   - examples
+4. Align packaging and trust signals:
+   - description
+   - topics
+   - changelog
+   - contributing docs
+   - security policy
+5. Prepare for community submission:
+   - awesome-list entry
+   - alphabetical placement
+   - metadata consistency
 
-Mention the task more explicitly, for example: "Use the GitHub Repo Commander skill to audit my repo at `<url>`." If the skill is installed correctly, this will always trigger it.
+## Why this is different
 
-**Q: `gh auth status` shows my token is expired.**
+Most repo tools focus on one slice of the problem: secret scanning, README generation, or discoverability. `github-repo-commander` treats GitHub readiness as one workflow:
 
-Run `gh auth logout && gh auth login` to re-authenticate. If using a Personal Access Token, set `export GH_TOKEN=<your-new-token>`.
+1. make it safe
+2. make it clear
+3. make it credible
+4. make it discoverable
 
-**Q: The audit script found hardcoded secrets. What now?**
+That makes it a better fit for real repository cleanup, where presentation, policy, and metadata usually need to move together.
 
-Remove the secrets from the file immediately. Then run `git log --all --full-history -- <file>` to check if they were ever committed. If so, you must rotate the credentials in the affected service — removing from the current commit is not sufficient if the secret exists in git history.
+## Advanced workflow assets
 
-**Q: Can I use this skill on private repositories?**
+This repo still includes deeper workflow material for heavier GitHub operations:
 
-Yes. The skill uses `gh` CLI which respects your GitHub authentication. Ensure your token has the `repo` scope for private repository access.
+- [references/workflow.md](./references/workflow.md): extended workflow guide
+- [references/gh-commands.md](./references/gh-commands.md): GitHub CLI reference
+- [scripts/repo-audit.sh](./scripts/repo-audit.sh): legacy shell audit helper
+- [scripts/privacy-check.sh](./scripts/privacy-check.sh): privacy-focused checks
+- [scripts/competitor-search.sh](./scripts/competitor-search.sh): competitor repo search helper
 
-**Q: Can I skip the competitor analysis step for small tasks?**
+## Community use
 
-For minor tasks (typo fixes, small updates), Stage 4 can be skipped. For structural changes (new features, refactors, new repositories), Stage 4 is mandatory — it consistently surfaces improvements that would otherwise be missed.
+This repo is intentionally packaged as a public community skill:
 
----
+- use [SKILL.md](./SKILL.md) as the main instruction surface
+- use [skill.json](./skill.json) and [_meta.json](./_meta.json) for ecosystem metadata
+- use [agents/openai.yaml](./agents/openai.yaml) for skill-card metadata
+- use [scripts/repo_commander_audit.py](./scripts/repo_commander_audit.py) when you want a deterministic repo audit helper
 
-## Related Skills
+## Repository contents
 
-- [openclaw-ultimate-suite](https://github.com/wd041216-bit/openclaw-ultimate-suite) — The full skill suite that includes this skill alongside 27 others
-
----
-
-## Contributing
-
-Contributions are welcome. Please open an issue first to discuss proposed changes, then submit a pull request. See [CHANGELOG.md](CHANGELOG.md) for version history.
-
----
+- [SKILL.md](./SKILL.md): main skill instructions
+- [README.zh-CN.md](./README.zh-CN.md): Chinese overview
+- [examples/audit-example.md](./examples/audit-example.md): sample audit findings
+- [docs/compatibility.md](./docs/compatibility.md): compatibility and portability notes
+- [CONTRIBUTING.md](./CONTRIBUTING.md): contribution workflow
+- [SECURITY.md](./SECURITY.md): vulnerability reporting policy
+- [CHANGELOG.md](./CHANGELOG.md): notable upgrades
+- [scripts/repo_commander_audit.py](./scripts/repo_commander_audit.py): repo audit helper
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
+MIT

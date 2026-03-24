@@ -1,29 +1,23 @@
 ---
-name: Feature Request
-about: Suggest an improvement to the skill or workflow
-title: "[FEAT] "
+name: Feature request
+about: Suggest a new audit rule, packaging check, or community-readiness improvement
+title: "[Feature] "
 labels: enhancement
-assignees: ''
+assignees: ""
 ---
 
-## Problem Statement
+## Problem
 
-What problem does this feature solve? What is currently missing or painful?
+What repository maintenance problem is not handled well today?
 
-## Proposed Solution
+## Proposal
 
-A clear description of what you want to happen.
+Describe the improvement you want.
 
-## Use Case
+## Why it matters
 
-Describe a concrete example of how this feature would be used:
+Explain how this would help public repo quality, safety, or discoverability.
 
-> "When I ask the agent to [X], I want it to [Y] instead of [Z]."
+## Tradeoffs
 
-## Alternatives Considered
-
-Any alternative solutions or workarounds you have considered.
-
-## Additional Context
-
-Any other context, screenshots, or examples.
+Mention any expected false positives, maintenance burden, or migration cost.

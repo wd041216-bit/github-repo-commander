@@ -1,34 +1,31 @@
 ---
-name: Bug Report
-about: Report a bug in the skill workflow or scripts
-title: "[BUG] "
+name: Bug report
+about: Report a broken audit rule, metadata mismatch, or workflow problem
+title: "[Bug] "
 labels: bug
-assignees: ''
+assignees: ""
 ---
 
-## Description
+## Summary
 
-A clear and concise description of the bug.
+Describe the problem in one or two sentences.
 
-## Steps to Reproduce
+## Reproduction
 
-1. Used the skill with command: `...`
-2. Expected behavior: `...`
-3. Actual behavior: `...`
+1. What repo or file layout triggered it?
+2. What command or workflow did you run?
+3. What happened?
+
+## Expected behavior
+
+What should have happened instead?
 
 ## Environment
 
-- `gh` version: (run `gh --version`)
-- `git` version: (run `git --version`)
-- OS: (e.g., macOS 14, Ubuntu 22.04)
-- Skill version: (check `_meta.json`)
+- `gh` version:
+- `git` version:
+- OS:
 
-## Relevant Output
+## Notes
 
-```
-Paste any error messages or unexpected output here
-```
-
-## Additional Context
-
-Any other context about the problem.
+Include file paths, sample findings, or screenshots if helpful.

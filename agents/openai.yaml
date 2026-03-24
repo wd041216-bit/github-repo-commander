@@ -1,0 +1,4 @@
+version: 1
+display_name: GitHub Repo Commander
+short_description: Audit, polish, and package repositories before open-sourcing, sharing, or directory submission.
+default_prompt: Use this skill when a repository needs privacy checks, README upgrades, metadata alignment, trust-signal cleanup, or community-submission preparation.

@@ -1,243 +1,105 @@
 ---
-name: openclaw-github-repo-commander
-description: >
-  Manages GitHub repositories using a 7-stage Super Workflow: deep audit, competitor
-  analysis, structural cleanup, PR review, and iterative optimization. Use this skill
-  whenever the user mentions managing a repo, reviewing a PR, refactoring a codebase,
-  creating a new project, analyzing competitor repos, cleaning up skills or libraries,
-  running a super workflow, or any GitHub-related task that benefits from systematic
-  analysis. Activate even if the user only says "optimize my repo", "clean up this
-  library", "review this code", "compare with competitors", or "use super workflow" -
-  this skill handles all of it.
-license: MIT
-compatibility: Requires gh (GitHub CLI >= 2.40) and git (>= 2.30). Run gh auth login before first use.
-metadata:
-  author: wd041216-bit
-  version: "4.2.0"
-  homepage: https://github.com/wd041216-bit/openclaw-github-repo-commander
+name: github-repo-commander
+homepage: https://github.com/wd041216-bit/openclaw-github-repo-commander
+description: Audit, polish, and package GitHub repositories before open-sourcing, sharing, or community submission, with privacy checks, README upgrades, metadata alignment, and discoverability improvements.
 ---
 
 # GitHub Repo Commander
 
-An AI-powered GitHub repository management skill that applies the **7-Stage Super Workflow** to every task, ensuring each commit, PR review, or repo restructure is backed by deep reflection and competitor benchmarking.
+Use this skill when a GitHub repository should be improved as a whole, not just in one narrow dimension.
 
-## When to Use This Skill
+## What this skill is for
 
-Activate automatically when the user asks to:
+Use it when the user wants to:
 
-- Manage, audit, or clean up a GitHub repository
-- Review or create a pull request
-- Refactor or restructure a codebase
-- Create a new project (and benchmark against competitors)
-- Analyze competitor repositories
-- Apply a "super workflow" or "deep optimization" to any code
-- Delete low-value files, skills, or dependencies from a library
-- Run `/super-workflow` on a repository URL
+- audit a repo before open-sourcing
+- make a repo cleaner and more presentable on GitHub
+- improve README, visual hierarchy, and project packaging
+- improve discoverability and recommendation readiness
+- remove model-specific assumptions from prompts or scripts
+- prepare a repo or skill for submission to an awesome-list
+- generalize a personal ecosystem-specific skill into a broader community skill
 
-## Quick Start
+## Commanding workflow
 
-```bash
-# Authenticate (one-time setup)
-gh auth login
+1. Inspect the repo with `gh` when the remote exists.
+2. Run the privacy/compliance audit script.
+3. Fix critical open-source blockers first:
+   - tokens
+   - `.env`
+   - local machine paths
+   - accidental personal data
+4. Then improve packaging and discoverability:
+   - repo description
+   - README first screen
+   - bilingual README coverage when relevant
+   - screenshots / demo / topics
+   - trust-signal files
+5. If the repo changed in a user-visible way, update the public docs at the same time:
+   - `README.md`
+   - `README.zh-CN.md` when the repo uses a Chinese doc track
+   - `CHANGELOG.md` or release notes for meaningful upgrades
+6. If the repo is skill-like, verify:
+   - `SKILL.md` frontmatter
+   - `skill.json`
+   - `_meta.json`
+7. If the target is an awesome-list or public skill ecosystem:
+   - normalize repository URL
+   - verify ordering and category fit
+   - reduce ecosystem-specific jargon in the public README
+   - include at least one concrete example or sample output
 
-# Verify access
-gh auth status
+## Built-in audit script
 
-# Clone target repository
-gh repo clone <owner>/<repo>
-```
-
-## 7-Stage Super Workflow
-
-For all non-trivial tasks, execute these stages in order. See [`references/workflow.md`](references/workflow.md) for detailed per-stage guidance.
-
-| Stage | Name | Key Action |
-|-------|------|------------|
-| 1 | **Intake** | Understand the request, inspect repo state, define success criteria |
-| 2 | **Execution** | Perform the primary GitHub operation (clone, edit, create PR, etc.) |
-| 3 | **Reflection** | Critically audit the work: security, scalability, docs, test coverage |
-| 4 | **Competitor Analysis** | Search top-starred repos; identify gaps vs. best practices |
-| 5 | **Synthesis** | Combine reflection + competitor findings into an actionable plan |
-| 6 | **Iteration** | Apply improvements; commit with descriptive messages |
-| 7 | **Validation** | Push, verify CI/CD, deliver GitHub link + summary to user |
-
-> **Rule:** Never skip Stage 3 (Reflection) or Stage 4 (Competitor Analysis) for structural changes. Surface-level success is not acceptable.
-
-## Core Operations
-
-### Repository Management
-
-```bash
-gh repo view <owner>/<repo>                        # Inspect repo metadata
-gh repo clone <owner>/<repo>                       # Clone locally
-gh repo create <name> --private                    # Create new private repo
-gh search repos <keyword> --sort stars --limit 10  # Find competitors
-gh repo fork <owner>/<repo>                        # Fork a repo
-```
-
-### Pull Requests and Issues
+Run:
 
 ```bash
-gh pr create --title "<title>" --body "<body>"  # Create PR
-gh pr list                                       # List open PRs
-gh pr review <id> --comment "<feedback>"         # Review PR
-gh pr merge <id> --squash                        # Merge PR
-gh issue list                                    # List issues
-gh issue create --title "<title>"                # Create issue
+python3 ./scripts/repo_commander_audit.py /path/to/repo
 ```
 
-### CI/CD and Releases
+Useful flags:
 
 ```bash
-gh run list --limit 5          # View recent workflow runs
-gh run view <run-id>           # Inspect a specific run
-gh release create v1.0.0       # Create a release
-gh release list                # List all releases
+python3 ./scripts/repo_commander_audit.py /path/to/repo --json
+python3 ./scripts/repo_commander_audit.py /path/to/repo --strict
 ```
 
-For the full command reference (50+ commands), see [`references/gh-commands.md`](references/gh-commands.md).
+The script checks for:
 
-## Reflection Checklist (Stage 3)
+- `.env`, secrets, token-like strings
+- leaked local paths with personal usernames or machine-specific home directories
+- missing skill metadata files
+- obviously model-specific wording
+- README presence and packaging issues
+- bilingual README coverage and cross-link expectations
+- changelog / upgrade-note presence for public package-style repos
+- missing contribution and security policy surfaces for public-facing repos
 
-Before committing any structural change, verify all of the following:
+## Advanced supporting files
 
-- [ ] No hardcoded credentials, tokens, or secrets in any file
-- [ ] No duplicate files or directories (use `diff -r` to confirm)
-- [ ] No empty directories or placeholder stubs without content
-- [ ] `node_modules/`, `__pycache__/`, `.env`, `*.orig` are in `.gitignore`
-- [ ] README accurately reflects the current state of the repo
-- [ ] All referenced files and links actually exist
-- [ ] Scripts are executable and have no hardcoded business-specific values
-- [ ] No large binary files committed accidentally
+This repo also contains deeper workflow assets for heavier GitHub operations:
 
-## Privacy Information Cleanup (Stage 3.5)
+- `references/workflow.md`
+- `references/gh-commands.md`
+- `scripts/repo-audit.sh`
+- `scripts/privacy-check.sh`
+- `scripts/competitor-search.sh`
 
-**Critical security stage added after real-world incident.** Run this after Stage 3 and before Stage 4 for all repos.
+## Commander rules
 
-### What This Stage Detects
+- Fix safety and privacy problems before beautifying the repo
+- Once safety is acceptable, actively improve the repo's presentation instead of stopping at compliance
+- If the upgrade changes visible behavior, update the docs in the same pass instead of treating docs as optional follow-up
+- Prefer human-readable GitHub positioning over keyword stuffing
+- Keep PR fixes focused and easy to review
+- Prefer general community framing in the public README even when the repo also supports one specific ecosystem
 
-| Pattern Type | Examples | Risk Level |
-|-------------|----------|------------|
-| GitHub Tokens | `ghp_`, `gho_`, `ghu_`, `ghs_`, `ghr_` | 🔴 Critical |
-| API Keys | `sk-`, `api_key`, `apikey`, `api-key` | 🔴 Critical |
-| OAuth Tokens | `oauth`, `bearer`, `access_token` | 🔴 Critical |
-| Private Keys | `-----BEGIN.*PRIVATE KEY-----` | 🔴 Critical |
-| Passwords | `password`, `passwd`, `pwd` | 🔴 Critical |
-| Secrets | `APP_SECRET`, `SECRET_KEY`, `secret` | 🔴 Critical |
-| Database URLs | `mongodb://`, `postgres://`, `mysql://` | 🟡 High |
-| Email Addresses | Personal emails in comments | 🟡 Medium |
-| IP Addresses | `192.168.x.x`, `10.x.x.x` | 🟡 Medium |
-| Phone Numbers | `+1-xxx-xxx-xxxx` patterns | 🟡 Medium |
-| Credit Cards | `4xxx-xxxx-xxxx-xxxx` patterns | 🔴 Critical |
+## Output expectations
 
-### Privacy Scan Command
+When you use this skill well, the result should usually include:
 
-```bash
-# Run comprehensive privacy scan
-./scripts/privacy-check.sh
-
-# Or use the enhanced repo-audit.sh (includes privacy checks since v4.2.0)
-./scripts/repo-audit.sh --privacy
-```
-
-### Privacy Cleanup Workflow
-
-1. **Scan for Secrets** — Use `./scripts/privacy-check.sh` to detect all sensitive patterns
-2. **Replace with Placeholders** — Use `YOUR_SECRET_HERE` or `<REDACTED>` as placeholders
-3. **Verify Git History** — Check if secrets were ever committed: `git log --all --full-history -- "**/*.env"`
-4. **Rotate Credentials** — If any secret was ever committed, **rotate it immediately**
-5. **Update .gitignore** — Add patterns: `*.env`, `.env.*`, `secrets.*`, `*_secret.*`
-6. **Re-scan** — Run `./scripts/privacy-check.sh` again to confirm all issues are resolved
-
-### Emergency Protocol for Leaked Secrets
-
-```bash
-# If a secret was committed to a public repo:
-# 1. ROTATE IMMEDIATELY — Generate a new token/key
-# 2. Update all services using the old token
-# 3. Remove from git history (if public):
-git filter-branch --force --index-filter \
-  'git rm --cached --ignore-unmatch path/to/secret-file' \
-  --prune-empty --tag-name-filter cat -- --all
-git push origin --force --all
-# 4. Contact GitHub support if needed
-```
-
-### Files to Always Check
-
-- `.env`, `.env.local`, `.env.production`
-- `config/*.yaml`, `config/*.json`
-- `*.config.js`, `settings.py`
-- Scripts containing `export`, `setenv`, `TOKEN=`
-- GitHub Actions workflows (`.github/workflows/*.yml`)
-- Documentation examples with real credentials
-
-## Notebook Invariant Checker (for LLM Cookbook PRs)
-
-When submitting Jupyter notebooks to LLM cookbook repositories (OpenAI, Gemini, Claude, Mistral, LLaMA, Qwen, etc.), use the invariant checker to prevent regressions across review rounds:
-
-```bash
-# Check a single notebook
-python3 scripts/notebook-invariant-checker.py --notebook path/to/notebook.ipynb
-
-# Check multiple notebooks at once
-python3 scripts/notebook-invariant-checker.py \
-    --notebook examples/openai_notebook.ipynb \
-    --notebook examples/gemini_notebook.ipynb
-
-# Auto-discover all notebooks in a directory
-python3 scripts/notebook-invariant-checker.py --dir examples/
-```
-
-The checker enforces three layers of invariants:
-
-| Layer | Scope | Count | Examples |
-|-------|-------|-------|----------|
-| Universal | All LLM cookbook notebooks | 7 | No `while True`, no deprecated imports, second-person voice |
-| OpenAI-specific | OpenAI cookbook notebooks | 13 | Lazy client init, `RUN_EXAMPLES` guard, no signature conflicts |
-| Gemini-specific | Gemini cookbook notebooks | 12 | License cell, `cellView=form`, Google-style docstrings |
-
-> **Rule:** Run the checker BEFORE and AFTER every fix. If any invariant fails, do NOT commit. Exit code `0` = safe to commit; `1` = fix required.
-
-## Competitor Analysis Guide (Stage 4)
-
-```bash
-# Find top competitors
-gh search repos <keyword> --sort stars --limit 10
-
-# Inspect a competitor structure
-gh repo clone <competitor>/<repo> /tmp/competitor-ref
-find /tmp/competitor-ref -maxdepth 3 -type f | head -30
-```
-
-Evaluate competitors on: directory structure, CI/CD setup, documentation quality, test coverage, `.gitignore` completeness, and README clarity.
-
-## Security and Privacy
-
-| Item | Detail |
-|------|--------|
-| External endpoints | `api.github.com` only (via `gh` CLI) |
-| Data leaving machine | Only git commit content and PR descriptions |
-| Data staying local | All file contents (unless explicitly pushed) |
-| Credential handling | Managed via `gh auth`; never hardcode tokens |
-
-> **Trust Statement:** This skill interacts exclusively with `api.github.com` through the official GitHub CLI. Only install if you trust the GitHub platform with your repository data.
-
-## Dependencies
-
-| Tool | Min Version | Install |
-|------|-------------|---------|
-| `gh` | 2.40 | [cli.github.com](https://cli.github.com/) |
-| `git` | 2.30 | System package manager |
-
-Run `gh auth login` once before first use.
-
-## Troubleshooting
-
-**Token expired:** `gh auth logout && gh auth login`
-
-**Push rejected (non-fast-forward):** `git pull --rebase origin main && git push`
-
-**`gh` not found:** `brew install gh` / `sudo apt install gh` / `winget install GitHub.cli`
-
-For advanced edge cases, see [`references/workflow.md`](references/workflow.md).
+- critical findings first
+- a proposed remediation plan
+- concrete README / metadata / discoverability changes
+- any contribution / security / example files needed for public trust
+- if relevant, a PR-ready awesome-list entry or ordering note

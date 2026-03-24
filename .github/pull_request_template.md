@@ -1,31 +1,14 @@
 ## Summary
 
-Brief description of what this PR changes and why.
+Briefly describe what changed.
 
-## Type of Change
+## Validation
 
-- [ ] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing behavior to change)
-- [ ] Documentation update
+- [ ] Ran `python3 ./scripts/repo_commander_audit.py .`
+- [ ] Updated public docs if behavior changed
+- [ ] Updated `CHANGELOG.md` for notable upgrades
+- [ ] Updated examples if audit behavior changed
 
-## Checklist
+## Notes
 
-- [ ] `scripts/repo-audit.sh` passes with 0 WARN, 0 FAIL
-- [ ] No hardcoded secrets or credentials
-- [ ] SKILL.md is under 500 lines
-- [ ] `_meta.json` version bumped if applicable
-- [ ] CHANGELOG.md updated
-
-## Testing
-
-Describe how you tested this change:
-
-```bash
-# Commands run to verify
-bash scripts/repo-audit.sh .
-```
-
-## Related Issues
-
-Closes #
+Anything reviewers should pay special attention to.

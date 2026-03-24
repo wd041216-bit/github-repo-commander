@@ -4,14 +4,22 @@
   "description": "A general-purpose GitHub repository stewardship skill for auditing privacy leaks, improving README and metadata quality, strengthening trust signals, and preparing repos for community submission.",
   "author": "Dawei + Codex",
   "homepage": "https://github.com/wd041216-bit/openclaw-github-repo-commander",
-  "tags": [
-    "github",
-    "repository-management",
-    "privacy",
-    "readme",
-    "discoverability",
-    "community-skill"
-  ],
-  "license": "MIT",
-  "updatedAt": "2026-03-24T12:55:00+08:00"
+  "metadata": {
+    "tags": [
+      "github",
+      "codex",
+      "community-skill",
+      "repository-management",
+      "privacy",
+      "open-source",
+      "llm-agnostic",
+      "readme",
+      "discoverability",
+      "presentation"
+    ],
+    "categories": [
+      "Development",
+      "Productivity"
+    ]
+  }
 }

@@ -1,55 +1,50 @@
-# Contributing to openclaw-github-repo-commander
+# Contributing
 
-Thank you for your interest in improving this skill. Contributions are welcome.
+Thanks for improving `github-repo-commander`.
 
-## How to Contribute
+## Good contributions
 
-### Reporting Bugs
+- clearer public positioning for community users
+- better repository audit coverage
+- stronger examples or before/after docs
+- metadata consistency improvements
+- fixes that make the skill more model-agnostic and ecosystem-neutral
 
-Open an issue using the **Bug Report** template. Include your `gh` version, OS, and the exact command that triggered the issue.
+## Before you open a PR
 
-### Suggesting Features
+1. Keep the public README community-friendly, not ecosystem-exclusive.
+2. Update both [README.md](./README.md) and [README.zh-CN.md](./README.zh-CN.md) when the public-facing behavior changes.
+3. Update [CHANGELOG.md](./CHANGELOG.md) for notable user-visible upgrades.
+4. If you change audit behavior, include or update an example in [examples/audit-example.md](./examples/audit-example.md).
 
-Open an issue using the **Feature Request** template. Describe the use case clearly — the more concrete, the better.
+## Local validation
 
-### Submitting a Pull Request
+Run the audit helper against this repo or a sample repo:
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feat/your-feature-name`
-3. Make your changes
-4. Run the validation script: `bash scripts/repo-audit.sh .`
-5. Commit with a conventional commit message (see below)
-6. Push and open a PR against `main`
-
-## Commit Message Convention
-
-This project uses [Conventional Commits](https://www.conventionalcommits.org/):
-
-| Prefix | When to use |
-|--------|-------------|
-| `feat:` | New feature or capability |
-| `fix:` | Bug fix |
-| `docs:` | Documentation only |
-| `chore:` | Maintenance (version bumps, CI, etc.) |
-| `refactor:` | Code restructuring without behavior change |
-
-**Examples:**
-```
-feat: add Stage 4 competitor scoring matrix to workflow.md
-fix: repo-audit.sh false positive on grep exit code
-docs: update README installation instructions
-chore: bump version to 4.1.0
+```bash
+python3 ./scripts/repo_commander_audit.py .
 ```
 
-## Quality Standards
+Useful variants:
 
-All PRs must pass the automated CI checks:
-- SKILL.md has valid frontmatter with `name` and `description`
-- SKILL.md is under 500 lines
-- All `.sh` scripts pass `bash -n` syntax check
-- No hardcoded secrets detected
-- `scripts/repo-audit.sh` exits with 0 FAIL
+```bash
+python3 ./scripts/repo_commander_audit.py . --json
+python3 ./scripts/repo_commander_audit.py . --strict
+```
 
-## Questions
+## Commit style
 
-Open a GitHub Discussion or issue if you have questions.
+Prefer concise conventional commit prefixes:
+
+- `feat:`
+- `fix:`
+- `docs:`
+- `refactor:`
+- `chore:`
+
+## Pull request expectations
+
+- keep changes focused
+- explain user-visible impact briefly
+- avoid reverting unrelated local edits
+- prefer examples over abstract claims
