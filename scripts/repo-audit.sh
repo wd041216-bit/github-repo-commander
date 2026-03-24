@@ -37,7 +37,9 @@ cd "$REPO_PATH"
 # ── 1. Hardcoded Secrets ─────────────────────────────────────────────────────
 echo "[ 1/7 ] Scanning for hardcoded secrets..."
 
-# Enhanced secret patterns (v4.2.0)
+# Enhanced secret patterns.
+# Keep the scan focused on likely leaked values, not documentation prose that
+# merely discusses "secrets" or "tokens" in general.
 SECRET_PATTERNS="\
 ghp_[A-Za-z0-9_]{36}|\
 gho_[A-Za-z0-9_]{36}|\
@@ -47,35 +49,14 @@ ghr_[A-Za-z0-9_]{36}|\
 ghu_[A-Za-z0-9_]{36}|\
 sk-[A-Za-z0-9]{20,}|\
 sk_live_[A-Za-z0-9]{24,}|\
-api_key|\
-apikey|\
-api-key|\
-password|\
-passwd|\
-pwd|\
-secret|\
-SECRET|\
-private_key|\
-PRIVATE_KEY|\
-access_token|\
-ACCESS_TOKEN|\
-auth_token|\
-AUTH_TOKEN|\
-bearer|\
-BEARER|\
-oauth|\
-OAUTH|\
-APP_SECRET|\
-APP_ID|\
-secret_key|\
-SECRET_KEY"
+(api[_-]?key|apikey|api-key|password|passwd|pwd|secret|private[_-]?key|access[_-]?token|auth[_-]?token|bearer|oauth|app_secret|app_id|secret_key)[[:space:]]*[:=][[:space:]]*.+"
 
-HITS=$(grep -rn --include="*.py" --include="*.js" --include="*.ts" \
+HITS=$(grep -rniE --include="*.py" --include="*.js" --include="*.ts" \
   --include="*.yaml" --include="*.yml" --include="*.json" --include="*.env" \
   --include="*.sh" --include="*.bash" --include="*.zsh" \
   --include="*.md" --include="*.txt" --include="*.cfg" --include="*.ini" \
   --exclude-dir=".git" --exclude-dir="node_modules" --exclude-dir="workflows" \
-  -E "$SECRET_PATTERNS" . 2>/dev/null | grep -v "example\|placeholder\|YOUR_\|<.*>\|SECRET_PATTERNS\|grep\|***REMOVED***\|<redacted>\|workflow.md\|SKILL.md\|README.md\|CHANGELOG.md\|CONTRIBUTING.md\|privacy-check.sh\|repo-audit.sh\|validate.yml\|competitor-search.sh\|pull_request_template.md" || true)
+  -E "$SECRET_PATTERNS" . 2>/dev/null | grep -vE "example|placeholder|YOUR_|<.*>|SECRET_PATTERNS|grep|\\*\\*\\*REMOVED\\*\\*\\*|<redacted>|workflow.md|SKILL.md|README.md|CHANGELOG.md|CONTRIBUTING.md|privacy-check.sh|repo-audit.sh|validate.yml|competitor-search.sh|pull_request_template.md" || true)
 
 if [ -z "$HITS" ]; then
   pass "No hardcoded secrets detected"
